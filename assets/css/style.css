@@ -1,0 +1,10 @@
+
+#train-table th,
+td {
+  display: inline-block;
+  width: 20%;
+}
+.jumbotron {
+    background-color: #007bff;
+    color: white;
+}
