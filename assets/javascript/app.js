@@ -19,17 +19,11 @@ var config = {
 firebase.initializeApp(config);
 
 var database = firebase.database();
-
 function nextTrain(firstTime, frequency, currentTime) {
-  // Assumptions
-  /*      var tFrequency = 3;
-  
-        // Time is 3:30 AM
-        var firstTime = "03:30";
-  */
+
   // First Time (pushed back 1 year to make sure it comes before current time)
 
-  var returnArr=[];
+  var returnArr = [];
   var firstTimeConverted = moment(firstTime, "HH:mm").subtract(1, "years");
   console.log("firsttimeconvereted: " + firstTimeConverted);
 
@@ -42,16 +36,12 @@ function nextTrain(firstTime, frequency, currentTime) {
   console.log(tRemainder);
 
   // Minute Until Train
- // var tMinutesTillTrain = frequency - tRemainder;
- returnArr[0] = frequency - tRemainder;
- // console.log("MINUTES TILL TRAIN: " + returnVal[0]);
+  // var tMinutesTillTrain = frequency - tRemainder;
+  returnArr[0] = frequency - tRemainder;
+  // console.log("MINUTES TILL TRAIN: " + returnVal[0]);
 
-  // Next Train
-  //var nextTrain = moment().add(tMinutesTillTrain, "minutes");
-  //var nextTrain = moment().add(tMinutesTillTrain, "minutes");
-    //console.log("ARRIVAL TIME: " + moment(nextTrain).format("hh:mm"));
 
-  varArrival =moment().add(returnArr[0], "minutes");
+  varArrival = moment().add(returnArr[0], "minutes");
   returnArr[1] = moment(varArrival).format("hh:mm a");
   console.log("ARRIVAL TIME: " + returnArr[1]);
   return returnArr;
@@ -74,7 +64,7 @@ $("#add-train-btn").on("click", function (event) {
   console.log("first train: " + firstTrain);
   console.log("frequency: " + frequency);
 
-  // Creates local "temporary" object for holding employee data
+  // Creates local "temporary" object for holding train data
   var newTrain = {
     name: trainName,
     destination: destination,
@@ -103,7 +93,8 @@ $("#add-train-btn").on("click", function (event) {
 });
 
 // 3. Create Firebase event for adding train to the database and a row in the html when a user adds an entry
-database.ref().on("child_added", function (childSnapshot) {
+//lets order by the train name
+database.ref().orderByChild('name').on("child_added", function (childSnapshot) {
   console.log(childSnapshot.val());
 
   // Store everything into a variable.
@@ -122,26 +113,18 @@ database.ref().on("child_added", function (childSnapshot) {
   var nextArrival = nextTrain(firstTrain, frequency, moment());
   var nextArrivalTime = nextArrival[1];
   console.log("next arrival: " + nextArrivalTime);
-    var minutesAway =  nextArrival[0];
+  var minutesAway = nextArrival[0];
   console.log("minutes away: " + minutesAway);
 
   // Create the new row
   var newRow = $("<tr>").append(
     $("<td>").text(trainName),
     $("<td>").text(destination),
-    $("<td>").text(frequency),
-    $("<td>").text(nextArrivalTime),
-    $("<td>").text(minutesAway)
+    $("<td class='tabcenter'>").text(frequency),
+    $("<td class='tabcenter'>").text(nextArrivalTime),
+    $("<td class='tabcenter'>").text(minutesAway)
   );
 
   // Append the new row to the table
   $("#train-table > tbody").append(newRow);
 });
-
-// Example Time Math
-// -----------------------------------------------------------------------------
-// Assume Employee start date of January 1, 2015
-// Assume current date is March 1, 2016
-
-// We know that this is 15 months.
-// Now we will create code in moment.js to confirm that any attempt we use meets this test case
