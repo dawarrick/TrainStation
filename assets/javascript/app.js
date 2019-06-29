@@ -19,6 +19,7 @@ var config = {
 firebase.initializeApp(config);
 
 var database = firebase.database();
+
 function nextTrain(firstTime, frequency, currentTime) {
 
   // First Time (pushed back 1 year to make sure it comes before current time)
@@ -40,13 +41,11 @@ function nextTrain(firstTime, frequency, currentTime) {
   returnArr[0] = frequency - tRemainder;
   // console.log("MINUTES TILL TRAIN: " + returnVal[0]);
 
-
   varArrival = moment().add(returnArr[0], "minutes");
   returnArr[1] = moment(varArrival).format("hh:mm a");
   console.log("ARRIVAL TIME: " + returnArr[1]);
   return returnArr;
 }
-
 
 
 // 2. Button for adding trains
@@ -71,11 +70,12 @@ $("#add-train-btn").on("click", function (event) {
     firstTrain: firstTrain,
     frequency: frequency
   };
-
   console.log("newTrain: " + newTrain);
-
   // Uploads train data to the database
   database.ref().push(newTrain);
+ //var newKey = database.ref().child.push().key();
+ //var updates = {};
+//  updates[newKey] = newTrain;
 
   // Logs everything to console
   console.log("train name: " + newTrain.trainName);
@@ -83,7 +83,7 @@ $("#add-train-btn").on("click", function (event) {
   console.log("first train: " + newTrain.firstTrain);
   console.log("frequency: " + newTrain.frequency);
 
-  alert("Train successfully added");
+  //alert("Train successfully added");
 
   // Clears all of the text-boxes
   $("#trainname-input").val("");
@@ -102,12 +102,14 @@ database.ref().orderByChild('name').on("child_added", function (childSnapshot) {
   var destination = childSnapshot.val().destination;
   var firstTrain = childSnapshot.val().firstTrain;
   var frequency = childSnapshot.val().frequency;
+  var tkey = childSnapshot.ref.parent.getKey();
 
   // Train Info
   console.log("trainName: " + trainName);
   console.log("destination: " + destination);
   console.log("first train: " + firstTrain);
   console.log("frequency: " + frequency);
+  console.log("key: " + tkey);
 
   // determine the next arrivale time and time between.  Returns an array
   var nextArrival = nextTrain(firstTrain, frequency, moment());

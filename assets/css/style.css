@@ -11,3 +11,13 @@ td {
 .tabcenter {
   text-align:center;
 }
+
+.modal-title {
+  background-color: #007bff;
+  text-align:center;
+}
+.modal-header {
+  background-color: #007bff;
+  color:white;
+  text-align:center;
+  }
