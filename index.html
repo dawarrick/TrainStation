@@ -51,10 +51,11 @@
                   <th scope="col" class="tabcenter">Frequency</th>
                   <th scope="col" class="tabcenter">Next Arrival</th>
                   <th scope="col" class="tabcenter">Minutes Away</th>
+                  <th scope="col" class="tabcenter">Actions</th>
                 </tr>
               </thead>
               <!--dynamically add rows to the body-->
-              <tbody>
+              <tbody id="trainbody">
               </tbody>
             </table>
           </div>
@@ -62,7 +63,7 @@
       </div>
     </div>
     <!-- Trigger the modal with a button -->
-    <button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#myModal">Add Train</button>
+    <button id="add-train-btn" type="button" class="btn btn-primary btn-md">Add Train</button>
 
     <!-- Modal -->
     <div id="myModal" class="modal fade" role="dialog">
@@ -94,8 +95,8 @@
                 <input class="form-control" id="frequency-input" type="number">
               </div>
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary float-right" data-dismiss="modal"
-                id="add-train-btn">Submit</button>
+              <button type="submit" class="btn btn-primary float-right" data-dismiss="modal" id="submit-train-btn"
+                action="add">Submit</button>
             </form>
           </div>
           <div class="modal-footer">

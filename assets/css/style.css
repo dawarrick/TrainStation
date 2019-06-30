@@ -1,15 +1,16 @@
 
-#train-table th,
-td {
-  display: inline-block;
-  width: 20%;
-}
+/*css for the train station app*/
+
 .jumbotron {
     background-color: #007bff;
     color: white;
 }
 .tabcenter {
   text-align:center;
+}
+
+.btn-modify {
+  margin-left:20px;
 }
 
 .modal-title {
