@@ -17,6 +17,7 @@ firebase.initializeApp(config);
 
 var database = firebase.database();
 var databaseRef = database.ref("/trains");
+var initialLoad = true;
 
 
 //figure out when the next train is due, and how far away it is
@@ -116,7 +117,6 @@ function addTrain(childSnapshot) {
     $("<td class='tabcenter'>").text(minutesAway),
     $("<td class='tabcenter' id=" + tkey + ">")
   );
-
   // Append the new row to the table
   $("#trainbody").append(newRow);
 
@@ -137,32 +137,41 @@ function addTrain(childSnapshot) {
 
 }
 
+//initialize the app.  Refreshing trains list every minute
+function initializeApp() {
+  var trainRefresh = setInterval(loadTrains, 60000,"timer");
+}
+
 //this will load the trains the initial time and reload on changes
 function loadTrains(snapshot) {
+  //make sure the modal isn't open
+  console.log("param: " + JSON.stringify(snapshot));
+  console.log("param2: " + snapshot);
+  //if (!($("#myModal").data('bs.modal') || {})._isShown) {
   //clear the trains and reload all of them
   $("tbody").empty();
 
-  //snapshot will be passed in on initial load, otherwise need to reload
-  /*  if (snapshot===null) {
-      databaseRef.orderByChild('name').once("value")
-        .then(function (snapshot) {
-          snapshot.forEach(function (childSnapshot) {
-            console.log("load snapshot: " + JSON.stringify(childSnapshot));
-            addTrain(childSnapshot);
-            // childData will be the actual contents of the child
-            //var childData = childSnapshot.val();
-          });
+  //snapshot will be passed in on initial load or change, otherwise refresh by timer and need to reload
+  if (snapshot === "timer") {
+    console.log("timer running");
+    databaseRef.orderByChild('name').once("value")
+      .then(function (snapshot) {
+        snapshot.forEach(function (childSnapshot) {
+          console.log("load snapshot: " + JSON.stringify(childSnapshot));
+          addTrain(childSnapshot);
         });
-    }
-    //process the snapshot already retrieved
-    else {
-      alert("retrieved");
-    */
-  snapshot.forEach(function (childSnapshot) {
-    console.log("load snapshot: " + JSON.stringify(childSnapshot));
-    addTrain(childSnapshot);
-  });
+      });
+  }
+  //process the snapshot already retrieved
+  else {
+    //alert("retrieved");
+    snapshot.forEach(function (childSnapshot) {
+      console.log("load snapshot: " + JSON.stringify(childSnapshot));
+      addTrain(childSnapshot);
+    });
+  }
 }
+
 
 
 // when submit on modal is clicked.  Could be add or update
@@ -246,14 +255,18 @@ $("#train-table").on('click', '.btn-delete', function () {
   }
 });
 
-
-// Retrieve data from the database and display.
-//lets order by the train name
+// Retrieve data from the database and display.  Going to order by the train name
 //databaseRef.orderByChild('name').on("child_added", function (snapshot) {
 databaseRef.orderByChild('name').on("value", function (snapshot) {
   console.log("snapshot JSON: " + JSON.stringify(snapshot));
 
   loadTrains(snapshot);
-
+  if (initialLoad) {
+    initialLoad = false;
+    initializeApp();
+  }
 });
+
+
+
 
