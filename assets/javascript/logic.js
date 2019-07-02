@@ -153,8 +153,9 @@ function loadTrains(snapshot) {
 
 
 // when submit on modal is clicked.  Could be add or update
-$("#submit-train-btn").on("click", function (event) {
-  event.preventDefault();
+//$("#submit-train-btn").on("click", function (event) {
+  $('#myModal').on('submit', function(event) {
+  
   // Grabs user input
   var trainName = $("#trainname-input").val().trim();
   var destination = $("#destination-input").val().trim();

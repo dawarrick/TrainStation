@@ -91,14 +91,14 @@
               <div class="form-group">
                 <label for="firsttrain-input">First Train Time (hh:mm - 24hr time)</label>
                 <input class="form-control" id="firsttrain-input" type="text" required
-                  pattern="[0-24]{2}[:]{1}[0-59]{2}">
+                  pattern="([0-1]{1}[0-9]{1}|20|21|22|23):[0-5]{1}[0-9]{1}">
               </div>
               <div class="form-group">
                 <label for="frequency-input">Frequency (Minutes)</label>
                 <input class="form-control" id="frequency-input" type="number" required min="2" max="1440">
               </div>
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary float-right" data-dismiss="modal" id="submit-train-btn"
+              <button type="submit" class="btn btn-primary float-right" id="submit-train-btn"
                 action="add">Submit</button>
             </form>
           </div>
