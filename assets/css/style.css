@@ -5,6 +5,7 @@
     background-color: #007bff;
     color: white;
 }
+
 .tabcenter {
   text-align:center;
 }
@@ -17,8 +18,9 @@
   background-color: #007bff;
   text-align:center;
 }
+
 .modal-header {
   background-color: #007bff;
   color:white;
   text-align:center;
-  }
+}

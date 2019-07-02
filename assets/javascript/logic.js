@@ -26,27 +26,22 @@ function nextTrain(firstTime, frequency) {
   var returnArr = [];
   var minutesAway = 0;
   var now = moment();
-  //  console.log("now: " + now);
 
   //covert the first train to a time format
   var firstTimeConverted = moment(firstTime, "HH:mm");
-  // console.log("firsttimeconvereted: " + firstTimeConverted);
 
   var arrivalTime = moment(firstTimeConverted).format("hh:mm a");
 
   // Difference between the times
   var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
-  // console.log("DIFFERENCE IN TIME: " + diffTime);
 
   //need to calculate differently if first train is in the future
   if (diffTime < 0) {
     minutesAway = diffTime * -1 + 1;
-    //    console.log("First Time: " + minutesAway);
   }
   else {
     // Time apart (remainder)
     var tRemainder = diffTime % frequency;
-    //    console.log("Remainder: " + tRemainder);
     minutesAway = frequency - tRemainder;
     var Arrival = moment().add(minutesAway, "minutes");
     arrivalTime = moment(Arrival).format("hh:mm a");
@@ -55,8 +50,6 @@ function nextTrain(firstTime, frequency) {
   returnArr[0] = minutesAway;
   returnArr[1] = arrivalTime;
 
-  //  console.log("MINUTES away: " + returnArr[0]);
-  //  console.log("ARRIVAL TIME: " + returnArr[1]);
   return returnArr;
 }
 
@@ -67,7 +60,6 @@ function getRecord(recordKey) {
 
   ref.once("value")
     .then(function (snapshot) {
-      console.log("snapshot: " + JSON.stringify(snapshot));
       //set the values in the dialog box
       var trainN = snapshot.val().name;
       var firstT = snapshot.val().firstTrain;
@@ -78,7 +70,6 @@ function getRecord(recordKey) {
       $("#firsttrain-input").val(firstT);
       $("#frequency-input").val(frequency);
     });
-
 }
 
 
@@ -92,8 +83,6 @@ function clearInput() {
 
 
 function addTrain(childSnapshot) {
-
-  console.log("addTrain: " + JSON.stringify(childSnapshot));
   // Store everything into a variable.
   var trainName = childSnapshot.val().name;
   var destination = childSnapshot.val().destination;
@@ -104,9 +93,8 @@ function addTrain(childSnapshot) {
   // determine the next arrival time and time between.  Returns an array
   var nextArrival = nextTrain(firstTrain, frequency);
   var nextArrivalTime = nextArrival[1];
-  //  console.log("next arrival: " + nextArrivalTime);
   var minutesAway = nextArrival[0];
-  //  console.log("minutes away: " + minutesAway);
+
 
   // Create the new row
   var newRow = $("<tr class='trow'>").append(
@@ -139,39 +127,29 @@ function addTrain(childSnapshot) {
 
 //initialize the app.  Refreshing trains list every minute
 function initializeApp() {
-  var trainRefresh = setInterval(loadTrains, 60000,"timer");
+  var trainRefresh = setInterval(loadTrains, 60000, "timer");
 }
 
 //this will load the trains the initial time and reload on changes
 function loadTrains(snapshot) {
-  //make sure the modal isn't open
-  console.log("param: " + JSON.stringify(snapshot));
-  console.log("param2: " + snapshot);
-  //if (!($("#myModal").data('bs.modal') || {})._isShown) {
   //clear the trains and reload all of them
   $("tbody").empty();
-
   //snapshot will be passed in on initial load or change, otherwise refresh by timer and need to reload
   if (snapshot === "timer") {
-    console.log("timer running");
     databaseRef.orderByChild('name').once("value")
       .then(function (snapshot) {
         snapshot.forEach(function (childSnapshot) {
-          console.log("load snapshot: " + JSON.stringify(childSnapshot));
           addTrain(childSnapshot);
         });
       });
   }
   //process the snapshot already retrieved
   else {
-    //alert("retrieved");
     snapshot.forEach(function (childSnapshot) {
-      console.log("load snapshot: " + JSON.stringify(childSnapshot));
-      addTrain(childSnapshot);
+       addTrain(childSnapshot);
     });
   }
 }
-
 
 
 // when submit on modal is clicked.  Could be add or update
@@ -191,20 +169,17 @@ $("#submit-train-btn").on("click", function (event) {
     frequency: frequency
   };
 
-  // Uploads train data to the database
+  //which action, add or update.
   var userAction = $("#submit-train-btn").attr("action");
-
+// Uploads train data to the database
   if (userAction == "add") {
     var newkey = databaseRef.push(newTrain).key;   //get unique key for future changes
-    //console.log("key: " + newkey);
   }
   else {
     //updating the record
     var updates = {};
     updates['/trains/' + userAction] = newTrain;
     var dreturn = database.ref().update(updates);
-    //console.log("key: " + userAction);
-    //console.log("return: " + dreturn);
   }
   clearInput();
 });
@@ -213,7 +188,6 @@ $("#submit-train-btn").on("click", function (event) {
 //if they click the add train button.  Need to set the action of the submit button
 $("#add-train-btn").click(function () {
   event.preventDefault();
-  //console.log("add initiated");
   //set the action for the submit button to be add
   $("#submit-train-btn").attr("action", "add");
   // Clears all of the text-boxes
@@ -228,7 +202,6 @@ $("#add-train-btn").click(function () {
 
 $("#train-table").on('click', '.btn-update', function () {
   event.preventDefault();
-  console.log("update initiated");
 
   //get the database key for the row from the button
   var tkey = $(this).attr("key");
@@ -256,17 +229,9 @@ $("#train-table").on('click', '.btn-delete', function () {
 });
 
 // Retrieve data from the database and display.  Going to order by the train name
-//databaseRef.orderByChild('name').on("child_added", function (snapshot) {
 databaseRef.orderByChild('name').on("value", function (snapshot) {
-  console.log("snapshot JSON: " + JSON.stringify(snapshot));
-
+  //console.log("snapshot JSON: " + JSON.stringify(snapshot));
   loadTrains(snapshot);
-  if (initialLoad) {
-    initialLoad = false;
-    initializeApp();
-  }
 });
 
-
-
-
+initializeApp();
